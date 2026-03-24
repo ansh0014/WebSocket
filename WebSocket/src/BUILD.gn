@@ -1,0 +1,72 @@
+# Main source build file
+
+# WebSocket Client library
+source_set("websocket_client_lib") {
+  sources = [
+    "cli/cli.cpp",
+    "cli/cli.h",
+    "websocket/websocket_client.cpp", 
+    "websocket/websocket_client.h",
+    "utils/logger.cpp",
+    "utils/logger.h",
+  ]
+
+  configs += [ "//gn:compiler_defaults" ]
+  
+  include_dirs = [ "//include" ]
+}
+
+# Release executable
+executable("websocket_client") {
+  sources = [ "main.cpp" ]
+  
+  deps = [ ":websocket_client_lib" ]
+  
+  configs += [ "//gn:compiler_defaults" ]
+  
+  if (is_win) {
+    libs = [ "ws2_32.lib" ]
+  } else {
+    libs = [ "pthread" ]
+  }
+}
+
+# Debug executable
+executable("websocket_client_debug") {
+  sources = [ "main.cpp" ]
+  
+  deps = [ ":websocket_client_lib" ]
+  
+  configs += [ "//gn:compiler_defaults" ]
+  
+  defines = [ "DEBUG=1" ]
+  
+  if (is_win) {
+    cflags = [ "/Od", "/Zi", "/DEBUG" ]
+    libs = [ "ws2_32.lib" ]
+  } else {
+    cflags = [ "-g", "-O0", "-DDEBUG" ]
+    libs = [ "pthread" ]
+  }
+}
+
+# Unit tests
+executable("websocket_client_tests") {
+  testonly = true
+  
+  sources = [
+    "tests/test_main.cpp",
+    "tests/websocket_test.cpp",
+    "tests/cli_test.cpp",
+  ]
+  
+  deps = [ ":websocket_client_lib" ]
+  
+  configs += [ "//gn:compiler_defaults" ]
+  
+  if (is_win) {
+    libs = [ "ws2_32.lib" ]
+  } else {
+    libs = [ "pthread" ]
+  }
+}

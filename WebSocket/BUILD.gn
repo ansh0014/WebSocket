@@ -1,0 +1,19 @@
+# Root build file for WebSocket Client
+
+group("default") {
+  deps = [ "//src:websocket_client" ]
+}
+
+group("all") {
+  deps = [
+    "//src:websocket_client",
+    "//src:websocket_client_debug",
+  ]
+}
+
+group("tests") {
+  testonly = true
+  deps = [
+    "//src:websocket_client_tests",
+  ]
+}
